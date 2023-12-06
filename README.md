@@ -4,6 +4,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1. General concepts.](#1-general-concepts)
 - [1. My perspective.](#1-my-perspective)
 - [2. Coroutines as *in-charge* directors.](#2-coroutines-as-in-charge-directors)
 - [3. Alternatives to coroutines for sequence production + consumption.](#3-alternatives-to-coroutines-for-sequence-production--consumption)
