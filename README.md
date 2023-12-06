@@ -20,7 +20,7 @@
 
 From a practical-use perspective *co*routines and *sub*routines are the two main kinds of *routines*, as the terms imply.
 
-<span style="color:gray; font-size:0.8em">Heads up: this differs from an unnatural & for C++ programming impractical academic perspective that you’ll find in e.g. Wikipedia, where subroutines are considered to be a special case of coroutines.</span>
+<sub><sup>Heads up: this differs from an unnatural & for C++ programming impractical academic perspective that you’ll find in e.g. Wikipedia, where subroutines are considered to be a special case of coroutines.</sup></sub>
 
 A **routine** is known as a “function” in C++. It’s a usually named and often parameterized specification of a sequence of actions + a set of local variables. In each **instance** of a routine the routine’s code refers to that instance’s unique set of parameter and local variable instances. With a general **subroutine** a request to execute the routine, a **call**, results in (1) creation of an instance, (2) execution of the instance’s sequence of actions, and (3) destruction of the instance, whence execution resumes at the point after the call. I.e. the sub-routine’s execution is *sub*ordinate to, nested in, the calling code’s execution.
 
