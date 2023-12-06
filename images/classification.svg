@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="382.62723mm"
+   height="189.62714mm"
+   viewBox="0 0 382.62723 189.62713"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="classification.svg"
+   inkscape:export-filename="D:\root\writings\teachings\tutorial series\github c++\Coroutines\images\classification.png"
+   inkscape:export-xdpi="66.709999"
+   inkscape:export-ydpi="66.709999"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.77771465"
+     inkscape:cx="534.90056"
+     inkscape:cy="342.67067"
+     inkscape:window-width="2539"
+     inkscape:window-height="1041"
+     inkscape:window-x="96"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g15662"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <defs
+     id="defs2">
+    <marker
+       style="overflow:visible"
+       id="Arrow1Mend"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path25855" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Lend"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend"
+       inkscape:isstock="true">
+      <path
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path25849" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(84.266392,-38.991423)">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 0.28487881,143.16323 63.562877,101.9983"
+       id="path140345"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 225.28043,143.16323 162.00208,101.9983"
+       id="path109861"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 160.4571,83.350514 123.71483,58.515463"
+       id="path26297"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 65.999999,83.350514 102.74227,58.515463"
+       id="path25844"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g15550"
+       transform="translate(-0.68041255,-7.8247421)">
+      <rect
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#e5ffd5;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.165407;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+         id="rect15541"
+         width="73.243507"
+         height="18.810518"
+         x="76.837006"
+         y="46.898869" />
+      <text
+         xml:space="preserve"
+         style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="113.28439"
+         y="59.158161"
+         id="text15545"><tspan
+           sodipodi:role="line"
+           id="tspan15543"
+           style="text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="113.28439"
+           y="59.158161">Routines</tspan></text>
+    </g>
+    <g
+       id="g15638"
+       transform="translate(-47.28866,35.72165)">
+      <rect
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#e5ffd5;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.165407;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+         id="rect15632"
+         width="73.243507"
+         height="18.810518"
+         x="76.837006"
+         y="46.898869" />
+      <text
+         xml:space="preserve"
+         style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="113.28439"
+         y="59.158161"
+         id="text15636"><tspan
+           sodipodi:role="line"
+           id="tspan15634"
+           style="text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="113.28439"
+           y="59.158161"><tspan
+   style="font-style:italic"
+   id="tspan16597">Sub-</tspan>routines</tspan></text>
+    </g>
+    <g
+       id="g15662"
+       transform="translate(46.721777,35.72165)">
+      <rect
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#e5ffd5;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.165407;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+         id="rect15656"
+         width="73.243507"
+         height="18.810518"
+         x="76.837006"
+         y="46.898869" />
+      <text
+         xml:space="preserve"
+         style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="113.28439"
+         y="59.158161"
+         id="text15660"><tspan
+           sodipodi:role="line"
+           id="tspan15658"
+           style="text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="113.28439"
+           y="59.158161"><tspan
+   style="font-style:italic"
+   id="tspan20277">Co</tspan>-routines</tspan></text>
+    </g>
+    <rect
+       style="font-variation-settings:normal;vector-effect:none;fill:#f9f9f9;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="rect58637"
+       width="149.01031"
+       height="86.752579"
+       x="149.35051"
+       y="141.86598"
+       ry="6.8041234"
+       rx="7.4845362" />
+    <rect
+       style="font-variation-settings:normal;vector-effect:none;fill:#aaffaa;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.165407;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="rect26309"
+       width="53.511543"
+       height="29.356911"
+       x="230.38353"
+       y="190.46587" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:center;text-anchor:middle;stroke-width:0.264583"
+       x="255.6563"
+       y="208.20578"
+       id="text26315"><tspan
+         sodipodi:role="line"
+         style="font-weight:bold;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="255.6563"
+         y="208.20578"
+         id="tspan96943">C++</tspan></text>
+    <g
+       id="g37013"
+       transform="translate(139.93827,104.10308)">
+      <g
+         id="g39507">
+        <rect
+           style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#e5ffd5;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.165407;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+           id="rect37005"
+           width="53.511543"
+           height="29.356911"
+           x="90.445251"
+           y="47.239075" />
+        <text
+           xml:space="preserve"
+           style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:start;text-anchor:start;stroke-width:0.264583"
+           x="94.465897"
+           y="59.158161"
+           id="text37011"><tspan
+             sodipodi:role="line"
+             style="text-align:start;text-anchor:start;stroke-width:0.264583"
+             x="94.465897"
+             y="59.158161"
+             id="tspan37009" /></text>
+      </g>
+    </g>
+    <g
+       id="g39517"
+       transform="translate(75.979511,143.22679)">
+      <rect
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#e5ffd5;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.165407;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+         id="rect39509"
+         width="53.511543"
+         height="29.356911"
+         x="90.445251"
+         y="47.239075" />
+      <text
+         xml:space="preserve"
+         style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:start;text-anchor:start;stroke-width:0.264583"
+         x="94.465897"
+         y="59.158161"
+         id="text39515"><tspan
+           sodipodi:role="line"
+           style="text-align:start;text-anchor:start;stroke-width:0.264583"
+           x="94.465897"
+           y="59.158161"
+           id="tspan39513" /></text>
+    </g>
+    <g
+       id="g42689"
+       transform="translate(75.979511,103.91412)">
+      <rect
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#e5ffd5;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.165407;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+         id="rect42681"
+         width="53.511543"
+         height="29.356911"
+         x="90.445251"
+         y="47.239075" />
+      <text
+         xml:space="preserve"
+         style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="117.54668"
+         y="64.978996"
+         id="text42687"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#666666;stroke-width:0.264583"
+           x="117.54668"
+           y="64.978996"
+           id="tspan42685">General</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';stroke-width:0.264583"
+       x="235.42267"
+       y="138.1237"
+       id="text62479"><tspan
+         sodipodi:role="line"
+         id="tspan62477"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua Italic';stroke-width:0.264583"
+         x="235.42267"
+         y="138.1237"><tspan
+   style="font-size:7.76111px"
+   id="tspan119326">Asymmetric</tspan>:</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';stroke-width:0.264583"
+       x="170.10309"
+       y="138.1237"
+       id="text66127"><tspan
+         sodipodi:role="line"
+         id="tspan66125"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua Italic';stroke-width:0.264583"
+         x="170.10309"
+         y="138.1237">Symmetric:</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:end;text-anchor:end;stroke-width:0.264583"
+       x="139.91743"
+       y="170.78351"
+       id="text72215"><tspan
+         sodipodi:role="line"
+         id="tspan72213"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua Italic';text-align:end;text-anchor:end;stroke-width:0.264583"
+         x="139.91743"
+         y="170.78351">Stackful:</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:end;text-anchor:end;stroke-width:0.264583"
+       x="139.91743"
+       y="208.20619"
+       id="text81493"><tspan
+         sodipodi:role="line"
+         id="tspan81491"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua Italic';text-align:end;text-anchor:end;stroke-width:0.264583"
+         x="139.91743"
+         y="208.20619">Stackless:</tspan></text>
+    <rect
+       style="font-variation-settings:normal;vector-effect:none;fill:#f9f9f9;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="rect58637-2"
+       width="87.092796"
+       height="86.752579"
+       x="-45.122814"
+       y="141.79343"
+       ry="6.8041234"
+       rx="7.4845362" />
+    <g
+       id="g39517-8"
+       transform="translate(-118.49382,143.15424)">
+      <rect
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#e5ffd5;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.165407;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+         id="rect39509-4"
+         width="53.511543"
+         height="29.356911"
+         x="90.445251"
+         y="47.239075" />
+      <text
+         xml:space="preserve"
+         style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:start;text-anchor:start;stroke-width:0.264583"
+         x="94.465897"
+         y="59.158161"
+         id="text39515-7"><tspan
+           sodipodi:role="line"
+           style="text-align:start;text-anchor:start;stroke-width:0.264583"
+           x="94.465897"
+           y="59.158161"
+           id="tspan39513-3" /></text>
+    </g>
+    <rect
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#aaffaa;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.165407;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       id="rect42681-3"
+       width="53.511543"
+       height="29.356911"
+       x="-28.048569"
+       y="151.08064" />
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:center;text-anchor:middle;stroke-width:0.264583"
+       x="-0.94714338"
+       y="163.52898"
+       id="text42687-1"><tspan
+         sodipodi:role="line"
+         style="font-weight:normal;text-align:center;text-anchor:middle;fill:#666666;stroke-width:0.264583"
+         x="-0.94714332"
+         y="163.52898"
+         id="tspan42685-8">General</tspan><tspan
+         sodipodi:role="line"
+         style="font-weight:bold;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="-0.94714326"
+         y="174.21513"
+         id="tspan1817">C++</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:center;text-anchor:middle;stroke-width:0.264583"
+       x="-0.94714338"
+       y="207.97893"
+       id="text139254"><tspan
+         sodipodi:role="line"
+         style="text-align:center;text-anchor:middle;fill:#666666;stroke-width:0.264583"
+         x="-0.94714338"
+         y="207.97893"
+         id="tspan139252">Fortran</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:end;text-anchor:end;stroke-width:0.264583"
+       x="-54.555893"
+       y="170.71095"
+       id="text72215-3"><tspan
+         sodipodi:role="line"
+         id="tspan72213-3"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua Italic';text-align:end;text-anchor:end;stroke-width:0.264583"
+         x="-54.555893"
+         y="170.71095">Stackful:</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.76111px;line-height:1.25;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua';text-align:end;text-anchor:end;stroke-width:0.264583"
+       x="-54.555893"
+       y="208.13364"
+       id="text81493-7"><tspan
+         sodipodi:role="line"
+         id="tspan81491-8"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.76111px;font-family:'Book Antiqua';-inkscape-font-specification:'Book Antiqua Italic';text-align:end;text-anchor:end;stroke-width:0.264583"
+         x="-54.555893"
+         y="208.13364">Stackless:</tspan></text>
+  </g>
+</svg>
