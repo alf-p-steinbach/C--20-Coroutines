@@ -28,22 +28,82 @@ In contrast, with a general **coroutine** there is no request to execute the rou
 
 &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/classification.png" width="66%">
 
-For subroutines **stackful** means that a subroutine can call itself directly or indirectly, called **recursion**, thus creating lifetime-nested instances. The lifetime-nesting requires/implies a stack of instances and execution return addresses in each thread of execution, and is the only kind of subroutine in C++. In contrast the default kind of subroutine in Fortran, and the only kind in Fortran 77, is **stackless**, essentially with a single return address location associated with each subroutine, which can give faster calls and which avoids the possibility of stack overflow, but which rules out (well-defined) recursive calls.
+For subroutines **stackful** means that a subroutine can call itself directly or indirectly, called **recursion**, thus creating lifetime-nested instances. The lifetime-nesting requires/implies a stack of instances and execution return addresses in each thread of execution, and is the only kind of subroutine in C++. In contrast the default kind of subroutine in Fortran, and the only kind in Fortran 77, is **stackless**, essentially with a single return address location associated with each subroutine, which rules out (well-defined) recursive calls.
 
-<table>
-<tr>
-<th>Recursive (requires a call stack):</th> <th>Iterative (can do without a call stack):</th>
-</tr>
-<tr>
-<td><pre>
-a
-b
-</pre></td>
+Recursive infix BST traversal *(requires stackful subroutine)*:
 
-</tr>
-</table>
+~~~cpp
+void recursive_for_each(
+    const_<Node*>               root,
+    in_<function<void(int)>>    consume
+    )
+{
+    if( root ) {
+        recursive_for_each( root->left, consume );
+        consume( root->value );
+        recursive_for_each( root->right, consume );
+    }
+}
+~~~
 
-For coroutines stackful means that a coroutine can call a stackful subroutine and transfer out somewhere within that call. For example, an in-order iteration over a binary tree can be easily expressed via a general coroutine calling a recursive traversal subroutine and transferring out from within its recursive calls, with its call stack serving to remember the path down from the tree’s root to the current position. This requires *one stack per coroutine instance*.
+
+Iterative infix BST traversal *(works also with stackless subroutine)*:
+
+~~~cpp
+void iterative_for_each(
+    const_<Node*>               root,
+    in_<function<void(int)>>    consume
+    )
+{
+    if( not root ) { return; }
+    enum class Heading{ down, up_from_left, up_from_right };
+    auto    heading     = Heading::down;
+    auto    current     = a_<Node*>( root );
+    auto    parents     = stack<Node*>();
+    for( ;; ) {
+        switch( heading ) {
+            case Heading::down: {
+                if( current->left ) {
+                    parents.push( current );
+                    current = current->left;
+                } else {
+                    heading = Heading::up_from_left;
+                }
+                break;
+            }
+            case Heading::up_from_left: {
+                consume( current->value );
+                if( current->right ) {
+                    parents.push( current );
+                    current = current->right;
+                    heading = Heading::down;
+                } else {
+                    heading = Heading::up_from_right;
+                }
+                break;
+            }
+            case Heading::up_from_right: {
+                if( is_empty( parents ) ) {
+                    return;
+                } else {
+                    const auto parent = a_<Node*>( popped_top_of( parents ) );
+                    heading = (current == parent->left?
+                        Heading::up_from_left : Heading::up_from_right
+                        );
+                    current = parent;
+                }
+                break;
+            }
+        }
+    }
+}
+~~~
+
+Since in the above examples the problem is of a recursive nature, the recursive function, which needs to be stackful, is very much shorter, simpler and clear.
+
+However, it suffers from a possibility of stack overflow, which the iterative code, which can be a stackless routine, avoids.
+
+For coroutines stackful means that a coroutine can call a stackful subroutine and transfer out somewhere within that call. For example, an in-order iteration over a binary tree can be easily expressed via a general coroutine calling a recursive traversal subroutine like `recursive_for_each` and transferring out from within its recursive calls, with its call stack serving to remember the path down from the tree’s root to the current position. This requires *one stack per coroutine instance*.
 
 One way to visualize this general notion is that there is a plane of coroutine instances spread about, connected by possible control transfers, and down from each coroutine extends a tree, a strict hierarchy, of possible subroutine calls. Or if you will, more concretely: at any point in time down from each coroutine instance extends a chain of subroutine calls, with every chain except the one that’s currently executing, ending in a transfer away from that chain’s coroutine instance. And these are also the points where execution later will resume when these coroutine instances are transferred to.
 
