@@ -28,9 +28,13 @@ In contrast, with a general **coroutine** there is no request to execute the rou
 
 &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/classification.png" width="66%">
 
-For subroutines **stackful** means that a subroutine can call itself directly or indirectly, called **recursion**, thus creating lifetime-nested instances. The lifetime-nesting requires/implies a stack of instances and execution return addresses in each thread of execution, and is the only kind of subroutine in C++. In contrast the default kind of subroutine in Fortran, and the only kind in Fortran 77, is **stackless**, essentially with a single return address location associated with each subroutine, which rules out (well-defined) recursive calls.
+### 1.1. Stackful versus stackless subroutines.
 
-Recursive infix BST traversal *(requires stackful subroutine)*:
+For subroutines **stackful** means that a subroutine can call itself directly or indirectly, i.e. recursion, thus creating lifetime-nested instances. The lifetime-nesting requires/implies a stack of instances and execution return addresses in each thread of execution, and is the only kind of subroutine in C++. In contrast the default kind of subroutine in Fortran, and the only kind in Fortran 77, is **stackless**, essentially with a single return address location associated with each subroutine, which rules out (well-defined) recursive calls.
+
+Coding something in a non-recursive way, compatible with stackless routines, can add much complexity.
+
+For example, compared to this recursive infix BST traversal which *requires a stackful subroutine*:
 
 ~~~cpp
 void recursive_for_each(
@@ -47,7 +51,7 @@ void recursive_for_each(
 ~~~
 
 
-Iterative infix BST traversal *(works also with stackless subroutine)*:
+&hellip; an iterative infix BST traversal that *works also with a stackless subroutine* is much more and more complex code:
 
 ~~~cpp
 void iterative_for_each(
@@ -99,27 +103,35 @@ void iterative_for_each(
 }
 ~~~
 
-Since in the above examples the problem is of a recursive nature, the recursive function, which needs to be stackful, is very much shorter, simpler and clear.
+Since in the above example the problem is of a recursive nature the recursive function, which needs to be stackful, is very much shorter, simpler and clear, and thus would ideally be the way to express this. However, in practice a C++ call stack is of *very limited* size, e.g. 1 MB by default with Visual C++, so it suffers from a possibility of stack overflow. The complex iterative code, which can be a stackless routine, avoids that problem.
 
-However, it suffers from a possibility of stack overflow, which the iterative code, which can be a stackless routine, avoids.
+---
+### 1.2 Stackful versus stackless coroutines.
 
-For coroutines stackful means that a coroutine can call a stackful subroutine and transfer out somewhere within that call. For example, an in-order iteration over a binary tree can be easily expressed via a general coroutine calling a recursive traversal subroutine like `recursive_for_each` and transferring out from within its recursive calls, with its call stack serving to remember the path down from the tree’s root to the current position. This requires *one stack per coroutine instance*.
+A **stackful coroutine** is one that can call a subroutine and transfer out somewhere within that call.
 
-One way to visualize this general notion is that there is a plane of coroutine instances spread about, connected by possible control transfers, and down from each coroutine extends a tree, a strict hierarchy, of possible subroutine calls. Or if you will, more concretely: at any point in time down from each coroutine instance extends a chain of subroutine calls, with every chain except the one that’s currently executing, ending in a transfer away from that chain’s coroutine instance. And these are also the points where execution later will resume when these coroutine instances are transferred to.
+For example, an in-order iteration over a binary tree can be easily expressed via a general coroutine calling a recursive traversal subroutine like `recursive_for_each` above, and transferring out from within its recursive calls. The call stack then serves to remember the path down from the tree’s root to the current iteration position. This requires *one stack per coroutine instance*.
 
->>> In contrast, with **stackless** subroutines a subroutine can’t be recursive. That’s the default for subroutines in Fortran (and was the only kind of subroutines in Fortran-77), For coroutines it means that a coroutine can not transfer out from within a call of some subroutine.
+Because of that multi-stack requirement general coroutines would in many use cases be *in conflict with the C++ ideal of not paying significantly for what you don’t use*. That’s especially so when conventional contiguous memory stacks based are used, but linked list stacks can affect performance by scattering memory accesses in a cache-unfriendly way. And so C++20 only supports a limited kind of coroutines called **stackless coroutine**s.
 
-asdasd
+A stackless coroutine transfer, expressed with keyword `co_await`, `co_yield` or `co_return`, must be *directly in the coroutine’s own code*.
 
-This means that each *general coroutine* instance, e.g. in Modula-2, has its own **call stack** of places that the execution should return to, one per subroutine call. And although a C++ call stack’s capacity typically is just a couple of MB, with the memory of a typical PC some ten thousand times larger (give or take some binary orders of magnitude), the scheme of general coroutines would in many use cases be *in conflict with the C++ ideal of not paying significantly for what you don’t use*. That’s especially so when conventional contiguous memory stacks based are used, but linked list stacks can affect performance by scattering memory accesses in a cache-unfriendly way.
+The subroutine calls that these coroutines make can have possibly long call chains until the execution returns back up to the next transfer. But when it gets back up to a point of control transfer the stack depth is limited to a very small value known at compile time. Which means that all coroutine instances in a thread of execution can share that thread’s single common stack for their arbitrarily stack hungy subroutine calls.
 
-And so C++20 only supports a limited kind of coroutines called **stackless coroutines**.
+---
+### 1.3 A conceptual visualization.
 
-A stackless coroutine transfer, expressed with keyword `co_await`, `co_yield` or `co_return`, must be *directly in the coroutine’s own code*. The subroutine calls that these coroutines make can have possibly long call chains until the execution returns back up to the next transfer, but at that point of a control transfer the stack depth is limited to a very small value known at compile time. Which means that all these coroutine instances can share the same single common stack for their arbitrarily stack hungy subroutine calls.
+One way to visualize the general notion of coroutine execution is that:
 
-In the mentioned visualization this correponds to a plane of coroutine instances where at any time there extends down a chain of subroutine calls from *just one of them*, namely the one currently executing.
+* In each thread there is a plane of coroutine instances spread about.
+* At any point in time down from each coroutine instance extends a chain of subroutine calls, with every chain except the one that’s currently executing, ending in a transfer away from that chain’s coroutine instance.
+* These out-transfer points at the ends of the call chains are also the points where execution later will resume when these coroutine instances are transferred to.
 
-Very nice and simple, but TANSTAAFL: *there ain’t no such thing as a free lunch*. One main cost of this memory usage efficiency is that it’s hard to provide any safe abstraction on top of C++ coroutine transfers, because the `co_await`, `co_yield` or `co_return` can’t be wrapped. In particular, a template pattern abstraction can’t be used for that code, so that one is essentially reduced to code generation and boiler-plate code, and abiding by convention.
+The difference with stackless couroutines is that at any time there extends down a chain of subroutine calls from *just one of the coroutine instances*, namely the one currently executing.
+
+### 1.4 Costs.
+
+Stackless coroutines is a nice and simple idea, but TANSTAAFL: *there ain’t no such thing as a free lunch*. One main cost of this memory usage efficiency is that it’s hard to provide any safe abstraction on top of C++ coroutine transfers, because the `co_await`, `co_yield` or `co_return` can’t be wrapped. In particular a template pattern abstraction can’t be used for that code, so that for any non-trivial usage one is essentially reduced to code generation and boiler-plate code, and abiding by convention.
 
 The C++20 coroutine support partially addresses the abstraction problem by providing a phletora of customization hooks, but unfortunately going down to that level insanely increases the complexity, which is a second cost.
 
