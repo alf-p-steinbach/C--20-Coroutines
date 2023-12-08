@@ -139,9 +139,9 @@ The (independent) difference with stackless couroutines is that at any time ther
 
 Stackless coroutines is a nice and simple idea  that saves on memory, but TANSTAAFL: *there ain’t no such thing as a free lunch*.
 
-One main cost of this memory usage efficiency is that it’s hard to provide any safe abstraction on top of C++ coroutine transfers, because the `co_await`, `co_yield` or `co_return` can’t be wrapped. In particular a template pattern abstraction can’t be used for a coroutine’s code, if it would wrap one of the these keywords. It seems that only the approach of code preprocessing remains.
+One main cost of this memory usage efficiency is that it’s **hard to provide any safe abstraction** on top of C++ coroutine transfers, because the `co_await`, `co_yield` or `co_return` can’t be wrapped. In particular a template pattern abstraction can’t be used for a coroutine’s code, if it would wrap one of the these keywords. It seems that only the approach of code preprocessing remains.
 
-A second cost is added **complexity** and hence code fragility. First of all this occurs when some naturally recursive logic has to be expressed iteratively to be compatible with stacklessness, as illustrated earlier by the `iterative_for_each` function. But it also occurs when one delves down to the "API" level of C++20 coroutines in order to customize things.
+A second cost is added **complexity** and hence code fragility. First of all this occurs when some naturally recursive logic has to be expressed iteratively to be compatible with stacklessness, as illustrated earlier by the `iterative_for_each` function. But it also occurs when one delves down to the “API” level of C++20 coroutines in order to customize things.
 
 ---
 
