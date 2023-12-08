@@ -308,7 +308,9 @@ To my eyes it looks more complex because there’s more visibly going on in a sh
 
 In some cases it’s practically possible for an ordinary programmer, one who is not trained as a mathematician, to replace the iterative stateful generation of some sequence with a mathematical formula that calculates the *i*ᵗʰ term directly.
 
-For example, $1 + 2 + 3 + \cdots + n$ can be calculated as *n* times the average of those numbers, i.e. $n \cdot  \frac{n + 1}{2} = \frac{1}{2}( n^2 + n )$.
+For example, $1 + 2 + 3 + \cdots + n$ can be calculated as *n* times the average of those numbers, i.e.
+
+$$n \cdot  \frac{n + 1}{2} = \frac{1}{2}( n^2 + n )$$
 
 As an example of another common case, since e.g. $10^3 - 1 = 900 + 90 + 9$ and more generally
 
@@ -316,7 +318,11 @@ $$x^n - 1 = (x-1) \cdot \sum_{i=0}^{n-1} {x^i}$$
 
 &hellip; the sum $x^0 + x^1 + x^2 + \cdots + x^{n-1}$ can be calculated as just $(x^n - 1)/(x - 1)$.
 
-The sum that the coroutine example program calculates, $\sum_{i = 1}^{n}{\frac{1}{2}(n^2 + n)}$, is more tricky. But googling it I found the formula $\frac{1}{6}n(n+1)(n+2)$. In my experience googling can often find such formulas.
+The sum that the coroutine example program calculates,
+
+$$\sum_{i = 1}^{n}{\frac{1}{2}(n^2 + n)}$$
+
+&hellip; is more tricky. But googling it I found the formula $\frac{1}{6}n(n+1)(n+2)$. In my experience googling can often find such formulas.
 
 <div><i>sum-of-sequence.re-expressed-3.formula.cpp</i>:</div>
 
