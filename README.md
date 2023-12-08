@@ -5,14 +5,17 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [1. General concepts.](#1-general-concepts)
-- [1. My perspective.](#1-my-perspective)
-- [2. Coroutines as *in-charge* directors.](#2-coroutines-as-in-charge-directors)
-- [3. Alternatives to coroutines for sequence production + consumption.](#3-alternatives-to-coroutines-for-sequence-production--consumption)
-  - [3.1. The producing code as a function that produces a collection of values.](#31-the-producing-code-as-a-function-that-produces-a-collection-of-values)
-  - [3.2. Inlining a coroutine’s code, suitably reworked, at the point or points where it’s used.](#32-inlining-a-coroutines-code-suitably-reworked-at-the-point-or-points-where-its-used)
-  - [3.3. Replacing the stateful sequence production with a mathematical formula.](#33-replacing-the-stateful-sequence-production-with-a-mathematical-formula)
-  - [3.4. Expressing the producing code as an object that on demand produces the next value.](#34-expressing-the-producing-code-as-an-object-that-on-demand-produces-the-next-value)
-  - [3.5. Expressing the consuming code as an object that when ordered consumes a specified value.](#35-expressing-the-consuming-code-as-an-object-that-when-ordered-consumes-a-specified-value)
+  - [1.1. Stackful versus stackless subroutines.](#11-stackful-versus-stackless-subroutines)
+  - [1.2 Stackful versus stackless and symmetric versus asymmetric coroutines.](#12-stackful-versus-stackless-and-symmetric-versus-asymmetric-coroutines)
+  - [1.3 Costs of stackless coroutines.](#13-costs-of-stackless-coroutines)
+- [2. My perspective.](#2-my-perspective)
+- [3. Coroutines as *in-charge* directors (with a working example).](#3-coroutines-as-in-charge-directors-with-a-working-example)
+- [4. Alternatives to coroutines for sequence production + consumption.](#4-alternatives-to-coroutines-for-sequence-production--consumption)
+  - [4.1. The producing code as a function that produces a collection of values.](#41-the-producing-code-as-a-function-that-produces-a-collection-of-values)
+  - [4.2. Inlining a coroutine’s code, suitably reworked, at the point or points where it’s used.](#42-inlining-a-coroutines-code-suitably-reworked-at-the-point-or-points-where-its-used)
+  - [4.3. Replacing the stateful sequence production with a mathematical formula.](#43-replacing-the-stateful-sequence-production-with-a-mathematical-formula)
+  - [4.4. Expressing the producing code as an object that on demand produces the next value.](#44-expressing-the-producing-code-as-an-object-that-on-demand-produces-the-next-value)
+  - [4.5. Expressing the consuming code as an object that when ordered consumes a specified value.](#45-expressing-the-consuming-code-as-an-object-that-when-ordered-consumes-a-specified-value)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -106,20 +109,21 @@ void iterative_for_each(
 Since in the above example the problem is of a recursive nature the recursive function, which needs to be stackful, is very much shorter, simpler and clear, and thus would ideally be the way to express this. However, in practice a C++ call stack is of *very limited* size, e.g. 1 MB by default with Visual C++, so it suffers from a possibility of stack overflow. The complex iterative code, which can be a stackless routine, avoids that problem.
 
 ---
-### 1.2 Stackful versus stackless coroutines.
+### 1.2 Stackful versus stackless and symmetric versus asymmetric coroutines.
 
 A **stackful coroutine** is one that can call a subroutine and transfer out somewhere within that call.
 
-For example, an in-order iteration over a binary tree can be easily expressed via a general coroutine calling a recursive traversal subroutine like `recursive_for_each` above, and transferring out from within its recursive calls. The call stack then serves to remember the path down from the tree’s root to the current iteration position. This requires *one stack per coroutine instance*.
+For example, an in-order iteration over a binary tree, handing out iterator values suitable for a range based `for` in C++, could be easily expressed via a general coroutine calling a recursive traversal subroutine like `recursive_for_each` above, and transferring out from within its recursive calls. The coroutine instance’s call stack then serves to remember the path down from the tree’s root to the current iteration position. This requires *one stack per coroutine instance*.
 
-Because of that multi-stack requirement general coroutines would in many use cases be *in conflict with the C++ ideal of not paying significantly for what you don’t use*. That’s especially so when conventional contiguous memory stacks based are used, but linked list stacks can affect performance by scattering memory accesses in a cache-unfriendly way. And so C++20 only supports a limited kind of coroutines called **stackless coroutine**s.
+Because of that multi-stack requirement general coroutines would in many use cases be *in conflict with the C++ ideal of not paying significantly for what you don’t use*.
+
+That’s especially so when conventional contiguous memory stacks based are used. Linked list stacks are technically possible, but even size-optimized linked list stacks can affect performance by scattering memory accesses in a cache-unfriendly way. And so C++20 only supports a limited kind of coroutines called **stackless coroutine**s.
 
 A stackless coroutine transfer, expressed with keyword `co_await`, `co_yield` or `co_return`, must be *directly in the coroutine’s own code*.
 
-The subroutine calls that these coroutines make can have possibly long call chains until the execution returns back up to the next transfer. But when it gets back up to a point of control transfer the stack depth is limited to a very small value known at compile time. Which means that all coroutine instances in a thread of execution can share that thread’s single common stack for their arbitrarily stack hungy subroutine calls.
+The subroutine calls that these coroutines make can have possibly long call chains until the execution returns back up to the next transfer. But when it gets back up to a point of control transfer the stack depth is limited to a very small value known at compile time, which means that all coroutine instances in a thread of execution can share that thread’s single common stack for their arbitrarily stack hungry subroutine calls. So they’re not entirely stackless — that term is to some degree a misnomer — but for their own internal code execution they use a very small fixed size stack, and for subroutine calls they share a common stack.
 
----
-### 1.3 A conceptual visualization.
+Recall that the general notion of coroutines is of stackful, **symmetric** coroutines. With symmetric coroutines each transfer specifies, directly or indirectly, the coroutine that should resume execution; the transfers are between coroutines. In contrast, with **asymmetric** coroutines a transfer to a coroutine comes from some top level control, and a transfer out from a coroutine is back up from the coroutine up to the top level control, which can then transfer down to another coroutine and resume that, and so on. And C++20 coroutines are not just limited to stackless. They’re also limited to asymmetric, which unfortunately leads to speaking about transfers — e.g. cppreference does this — as **calls** and **returns**, even though this is very unlike subroutine calls and returns.
 
 One way to visualize the general notion of coroutine execution is that:
 
@@ -127,20 +131,21 @@ One way to visualize the general notion of coroutine execution is that:
 * At any point in time down from each coroutine instance extends a chain of subroutine calls, with every chain except the one that’s currently executing, ending in a transfer away from that chain’s coroutine instance.
 * These out-transfer points at the ends of the call chains are also the points where execution later will resume when these coroutine instances are transferred to.
 
-The difference with stackless couroutines is that at any time there extends down a chain of subroutine calls from *just one of the coroutine instances*, namely the one currently executing.
+The difference with assymetric coroutines is that instead of a web of possible transfers between the coroutine instances, there are possible transfers from/to each coroutine instance up to a top level control above the coroutine plane, e.g. a C++ `main`.
 
-### 1.4 Costs.
+The (independent) difference with stackless couroutines is that at any time there extends down a chain of subroutine calls from *just one of the coroutine instances*, namely the one currently executing.
 
-Stackless coroutines is a nice and simple idea, but TANSTAAFL: *there ain’t no such thing as a free lunch*. One main cost of this memory usage efficiency is that it’s hard to provide any safe abstraction on top of C++ coroutine transfers, because the `co_await`, `co_yield` or `co_return` can’t be wrapped. In particular a template pattern abstraction can’t be used for that code, so that for any non-trivial usage one is essentially reduced to code generation and boiler-plate code, and abiding by convention.
+### 1.3 Costs of stackless coroutines.
 
-The C++20 coroutine support partially addresses the abstraction problem by providing a phletora of customization hooks, but unfortunately going down to that level insanely increases the complexity, which is a second cost.
+Stackless coroutines is a nice and simple idea  that saves on memory, but TANSTAAFL: *there ain’t no such thing as a free lunch*.
 
-A third main cost is that a C++ coroutine can’t be recursive. For example, an in-order iteration over a binary tree could be easily expressed via a general coroutine calling a recursive subroutine and transferring out from within recursive calls, with its call stack serving to remember the path down from the tree’s root to the current position. But with a C++ stackless coroutine one must either make that path explicit via e.g. a `std::stack`, or have parent links in the nodes, or use some other such workaround.
+One main cost of this memory usage efficiency is that it’s hard to provide any safe abstraction on top of C++ coroutine transfers, because the `co_await`, `co_yield` or `co_return` can’t be wrapped. In particular a template pattern abstraction can’t be used for a coroutine’s code, if it would wrap one of the these keywords. It seems that only the approach of code preprocessing remains.
 
+A second cost is added **complexity** and hence code fragility. First of all this occurs when some naturally recursive logic has to be expressed iteratively to be compatible with stacklessness, as illustrated earlier by the `iterative_for_each` function. But it also occurs when one delves down to the "API" level of C++20 coroutines in order to customize things.
 
 ---
 
-## 1. My perspective.
+## 2. My perspective.
 
 I’m writing this as I’m *teaching myself* about C++20 stackless coroutines. I’m no stranger to general coroutines, though: I first learned the basic notions without having a name for them, in assembly programming in college in the early 1980’s; then I became familiar with proper language support for coroutines in Modula-2 in the late 1980’s; and then in the mid 1990’s I implemented some simple coroutine support in C++ with some added assembly. I later learned that my approach then, using `setjmp`, was really dangerous and error prone, but happily I had cautioned my single known library (or example program? I don’t recall) user who probably, hopefully, just used the code as an example and starting point.
 
@@ -150,7 +155,7 @@ So far my impression is that C++20 stackless coroutines are seemingly designed f
 
 ---
 
-## 2. Coroutines as *in-charge* directors.
+## 3. Coroutines as *in-charge* directors (with a working example).
 
 A natural way to produce a sequence of integer values is via an indexing `for` loop:
 
@@ -174,7 +179,7 @@ As a super-short analysis: the first code snippet invoked with `n` = 7 produces 
 
 And by definining or using someone else’s support, C++20 coroutines let you join such apparently irreconcilable ***I’m in charge*** snippets.
 
-In the code below the `coroutine::Sequence_<int>` return type is a Do-It-Yourself class that provides necessary support for this way to use of coroutines. That part is non-trivial; I discuss it later. Happily C++23 will have/has `std::generator` that does just about the same job but also connects with the ranges sub-library, but C++23 lacks support for other coroutine use cases.
+In the code below the `coroutine::Sequence_<int>` return type is a Do-It-Yourself class that provides necessary support for this way to use of coroutines. That part is non-trivial; I discuss it later. Happily C++23 will have/has `std::generator` that does just about the same job but also connects with the ranges sub-library, but even C++23 lacks support for other coroutine use cases.
 
 
 *sum-of-sequence.cpp*:
@@ -206,19 +211,19 @@ The output is correctly twice the universal answer 42, namely
 84
 ```
 
-The earlier producer code snippet’s `do_something_with`-call is here replaced with a `co_yield` expression that transfers control back to `main`.
+The earlier producer code snippet’s `do_something_with`-call is here replaced with a `co_yield` expression that transfers control back to `main`. As mentioned it wouldn't work to define a subroutine `do_something_with` that issued the `co_yield`. Because then, lacking that keyword, `numbers` would no longer be coroutine but just an ordinary subroutine.
 
 There is no corresponding `co_yield` in `main` or in the code called by `main`, because with C++ stackless coroutines it’s only in a very abstract sense that `main` is a coroutine here. To (repeatedly) transfer control to the corutine, `main` instead indirectly calls *h*`.resume()` where *h* is a handle of the coroutine instance. These indirect calls happen through the iterator operations in the range based `for` loop, with the iterators produced by the `numbers(7)` result.
 
-This means that C++ stackless coroutines, while *co* with each other, are *not on an equal footing* with their “callers” like `main`. The documentation at cppreference talks about “call” and “return”, a very assymetric subroutine-like relationship. Apparently a “caller” of a coroutine instance means the code that instantiated it.
+This means that C++ stackless coroutines, while *co* with each other, are *not on an equal footing* with their “callers” like `main`. The documentation at cppreference talks about “call” and “return”, a very assymetric subroutine-like relationship. A “caller” of a coroutine instance means the top level controlling code that transfers down to it.
 
-Another relevant point: it’s the `co_yield` that makes `numbers` a coroutine. In particular the return type, while constituting necessary helper machinery, doesn’t tell the compiler that this is a coroutine, and so by seeing only the pure declaration of a coroutine *the compiler doesn’t know that it’s a coroutine*. All the special treatment — e.g. that a direct call doesn’t normally enter any of the code in the function body — happens for the possibly separately compiled function definition, and for use of a coroutine handle, and otherwise a coroutine is just an ordinary normal function.
+Another relevant point: the return type, while constituting necessary helper machinery, doesn’t tell the compiler that this is a coroutine, and so by seeing only the pure declaration of a coroutine *the compiler doesn’t know that it’s a coroutine*. All the special treatment — e.g. that a direct call doesn’t normally enter any of the code in the function body — happens for the possibly separately compiled function definition, and for use of a coroutine handle, and otherwise a coroutine is just an ordinary normal function. It’s the `co_yield` in the routine body that declares “this is a coroutine”.
 
 Third but marginal point: the name `Sequence_` of my DIY function result class indicates *what* the function produces, while the C++23 name `generator` more indicates the *how*, namely that the function works like a [Python generator](https://wiki.python.org/moin/Generators). Possibly helpful if one is familiar with Python. However, note that using a coroutine as a sequence generator is just the ~simplest way to use a coroutine.
 
 ---
 
-## 3. Alternatives to coroutines for sequence production + consumption.
+## 4. Alternatives to coroutines for sequence production + consumption.
 
 Possible ways to write the above example without coroutines include
 
@@ -232,7 +237,7 @@ The last two points can be done via Do-It-Yourself classes or in some/many cases
 
 For a simple example such as above these rewrites cannot reflect how complex and how much work this can be, but I show and discuss the rewrites because to make an informed choice of whether to use coroutines, one needs to be aware of the design possibilities, the design space.
 
-### 3.1. The producing code as a function that produces a collection of values.
+### 4.1. The producing code as a function that produces a collection of values.
 
 With the producing code rewritten to produce an ordinary collection of values the `main` function logic can be kept literally as-is, no change:
 
@@ -266,7 +271,7 @@ However what happens on the inside of that range based `for` loop is very differ
 
 So, in this picture the coroutine approach is the evolutionary step up to Unix-like parallel execution pipes.
 
-### 3.2. Inlining a coroutine’s code, suitably reworked, at the point or points where it’s used.
+### 4.2. Inlining a coroutine’s code, suitably reworked, at the point or points where it’s used.
 
 The idea for the names `s2` and `s3` in this rewrite is that the view of $s_2(i)=s_2(i-1)+i$ (the numbers handed to `co_yield` and obtained from `numbers(7)`) and similarly $s_3(i)=s_3(i-1)+s_2(i)$ (the numbers calculated by the consumer code in `main`) fits the generalization
 
@@ -299,7 +304,7 @@ This is certainly more *efficient* than the coroutine approach, but with other p
 To my eyes it looks more complex because there’s more visibly going on in a short stretch of code; the coroutine approach is one way to divide it into more easily grokable subproblems.
 
 
-### 3.3. Replacing the stateful sequence production with a mathematical formula.
+### 4.3. Replacing the stateful sequence production with a mathematical formula.
 
 In some cases it’s practically possible for an ordinary programmer, one who is not trained as a mathematician, to replace the iterative stateful generation of some sequence with a mathematical formula that calculates the *i*ᵗʰ term directly.
 
@@ -322,7 +327,7 @@ auto main() -> int
 
 Happily this rewrite using a not well understood formula, still produces the correct result 84.
 
-### 3.4. Expressing the producing code as an object that on demand produces the next value.
+### 4.4. Expressing the producing code as an object that on demand produces the next value.
 
 A Do-It-Yourself class for an object that produces the triangular numbers of the coroutine, can go like this:
 
@@ -363,7 +368,7 @@ A main design issue is the call to `advance()` in the constructor, because for s
 
 Instead of that automatic primer call one can then have essentially ~0 construction cost by adding checking in each externally available operation, of whether the object state has been brought up to first value and if not, calling `advance()`, or whatever is necessary.
 
-### 3.5. Expressing the consuming code as an object that when ordered consumes a specified value.
+### 4.5. Expressing the consuming code as an object that when ordered consumes a specified value.
 
 A Do-It-Yourself class that does the work of the `main` loop in the coroutine example, can go like this:
 
