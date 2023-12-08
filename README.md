@@ -151,7 +151,7 @@ I’m writing this as I’m *teaching myself* about C++20 stackless coroutines. 
 
 For documentation I’m using the info and examples at [cppreference.com](https://en.cppreference.com/w/cpp/language/coroutines).
 
-So far my impression is that C++20 stackless coroutines are seemingly designed for and possible to employ for some specific use cases such as generating a sequence of values that can be consumed by a range based `for`, and that otherwise, for other things, the aforementioned insane complexity kicks in.
+So far my impression is that C++20 stackless coroutines are seemingly designed for and possible to employ for some specific use cases such as generating a sequence of values that can be consumed by a range based `for`, and that otherwise, for other things, insane complexity kicks in.
 
 ---
 
