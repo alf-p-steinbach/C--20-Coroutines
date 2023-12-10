@@ -211,7 +211,7 @@ The output is correctly twice the universal answer 42, namely
 84
 ```
 
-The earlier producer code snippet’s `do_something_with`-call is here replaced with a `co_yield` expression that transfers control back to `main`. As mentioned it wouldn't work to define a subroutine `do_something_with` that issued the `co_yield`. Because then, lacking that keyword, `numbers` would no longer be coroutine but just an ordinary subroutine.
+The earlier producer code snippet’s `do_something_with`-call is here replaced with a `co_yield` expression that transfers control back to `main`. As mentioned it wouldn't work to define a subroutine `do_something_with` that issued the `co_yield`. Because then, lacking that keyword, `numbers` would no longer be coroutine but just an ordinary subroutine, and `do_something_with` would then become a coroutine where each apparent call from `numbers` would just create and discard a coroutine instance.
 
 There is no corresponding `co_yield` in `main` or in the code called by `main`, because with C++ stackless coroutines it’s only in a very abstract sense that `main` is a coroutine here. To (repeatedly) transfer control to the corutine, `main` instead indirectly calls *h*`.resume()` where *h* is a handle of the coroutine instance. These indirect calls happen through the iterator operations in the range based `for` loop, with the iterators produced by the `numbers(7)` result.
 
