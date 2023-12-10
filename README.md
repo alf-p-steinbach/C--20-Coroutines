@@ -177,7 +177,7 @@ And a natural way to consume such a sequence, e.g. to add the numbers, is via a 
 
 As a super-short analysis: the first code snippet invoked with `n` = 7 produces the sums 1, 3, 6, 10, 15, 21 and 28, known as triangular numbers, and the second code snippet — if somehow the first snippet’s `do_something_with` could be joined with this snippet’s `numbers(7)` — then outputs 1 + 3 + 6 + 10 + 15 + 21 + 28 = 84.
 
-And by definining or using someone else’s support, C++20 coroutines let you join such apparently irreconcilable ***I’m in charge*** snippets.
+The first snippet acts like a subroutine that’s called and during the call, where it’s in complete charge, further calls `do_something_with` a number of times. The second snippet acts like a subroutine that’s called and during the call, where it’s in complete charge, retrieves and processes values from the logical collection `numbers(7)`. This might seem irreconcilable unless one accepts costs such as storing the collection of numbers somewhere, but by definining or using someone else’s support C++20 coroutines let you directly join such apparently irreconcilable ***I’m in charge*** snippets, sort of like a shell pipe.
 
 In the code below the `coroutine::Sequence_<int>` return type is a Do-It-Yourself class that provides necessary support for this way to use coroutines. That part is non-trivial; I discuss it later. Happily C++23 will have/has `std::generator` that does just about the same job but also connects with the ranges sub-library, but even C++23 lacks support for other coroutine use cases.
 
