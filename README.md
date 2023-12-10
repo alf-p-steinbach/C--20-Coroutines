@@ -179,7 +179,7 @@ As a super-short analysis: the first code snippet invoked with `n` = 7 produces 
 
 And by definining or using someone else’s support, C++20 coroutines let you join such apparently irreconcilable ***I’m in charge*** snippets.
 
-In the code below the `coroutine::Sequence_<int>` return type is a Do-It-Yourself class that provides necessary support for this way to use of coroutines. That part is non-trivial; I discuss it later. Happily C++23 will have/has `std::generator` that does just about the same job but also connects with the ranges sub-library, but even C++23 lacks support for other coroutine use cases.
+In the code below the `coroutine::Sequence_<int>` return type is a Do-It-Yourself class that provides necessary support for this way to use coroutines. That part is non-trivial; I discuss it later. Happily C++23 will have/has `std::generator` that does just about the same job but also connects with the ranges sub-library, but even C++23 lacks support for other coroutine use cases.
 
 
 [*sum-of-sequence.cpp*](code/sections/coroutines%20as%20in-charge%20directors/sum-of-sequence.cpp):
