@@ -37,7 +37,7 @@ For subroutines **stackful** means that a subroutine can call itself directly or
 
 Coding something in a non-recursive way, compatible with stackless routines, can add much complexity.
 
-For example, compared to this recursive infix BST traversal which *requires a stackful subroutine*:
+For [example](code/sections/general%20concepts/stackful-vs-stackless-bst-traversal.cpp), compared to this recursive infix BST traversal which *requires a stackful subroutine*:
 
 ~~~cpp
 void recursive_for_each(
@@ -182,7 +182,7 @@ And by definining or using someone else’s support, C++20 coroutines let you jo
 In the code below the `coroutine::Sequence_<int>` return type is a Do-It-Yourself class that provides necessary support for this way to use of coroutines. That part is non-trivial; I discuss it later. Happily C++23 will have/has `std::generator` that does just about the same job but also connects with the ranges sub-library, but even C++23 lacks support for other coroutine use cases.
 
 
-*sum-of-sequence.cpp*:
+[*sum-of-sequence.cpp*](code/sections/coroutines%20as%20in-charge%20directors/sum-of-sequence.cpp):
 ```cpp
 #include <cpp_machinery/coroutine/Sequence_.hpp>
 #include <stdio.h>
@@ -241,7 +241,7 @@ For a simple example such as above these rewrites cannot reflect how complex and
 
 With the producing code rewritten to produce an ordinary collection of values the `main` function logic can be kept literally as-is, no change:
 
-<div><i>sum-of-sequence.re-expressed-1.collection.cpp</i>:</div>
+[*sum-of-sequence.re-expressed-1.collection.cpp*](code/sections/alternatives%20to%20coroutines%20for%20sequence%20production%20+%20consumption/sum-of-sequence.re-expressed-1.collection.cpp):
 
 ```cpp
 #include <vector>
@@ -283,7 +283,7 @@ s_k(i) &= s_k(i-1) + s_{k-1}(i)
 \end{aligned}
 $$
 
-<div><i>sum-of-sequence.re-expressed-2.inlined.cpp</i>:</div>
+[*sum-of-sequence.re-expressed-2.inlined.cpp*](code/sections/alternatives%20to%20coroutines%20for%20sequence%20production%20+%20consumption/sum-of-sequence.re-expressed-2.inlined.cpp):
 
 ```cpp
 #include <stdio.h>
@@ -324,7 +324,7 @@ $$\sum_{i = 1}^{n}{\frac{1}{2}(n^2 + n)}$$
 
 &hellip; is more tricky. But googling it I found the formula $\frac{1}{6}n(n+1)(n+2)$. In my experience googling can often find such formulas.
 
-<div><i>sum-of-sequence.re-expressed-3.formula.cpp</i>:</div>
+[*sum-of-sequence.re-expressed-3.formula.cpp*](code/sections/alternatives%20to%20coroutines%20for%20sequence%20production%20+%20consumption/sum-of-sequence.re-expressed-3.formula.cpp):
 
 ```cpp
 #include <stdio.h>
@@ -341,7 +341,7 @@ Happily this rewrite using a not well understood formula, still produces the cor
 
 A Do-It-Yourself class for an object that produces the triangular numbers of the coroutine, can go like this:
 
-<div><i>sum-of-sequence.re-expressed-4.stateful-producer-object.cpp</i>:</div>
+[*sum-of-sequence.re-expressed-4.stateful-producer-object.cpp*](code/sections/alternatives%20to%20coroutines%20for%20sequence%20production%20+%20consumption/sum-of-sequence.re-expressed-4.stateful-producer-object.cpp):
 
 ```cpp
 class Numbers
@@ -382,7 +382,7 @@ Instead of that automatic primer call one can then have essentially ~0 construct
 
 A Do-It-Yourself class that does the work of the `main` loop in the coroutine example, can go like this:
 
-<div><i>sum-of-sequence.re-expressed-5.stateful-consumer-object.cpp</i>:</div>
+[*sum-of-sequence.re-expressed-5.stateful-consumer-object.cpp*](code/sections/alternatives%20to%20coroutines%20for%20sequence%20production%20+%20consumption/sum-of-sequence.re-expressed-5.stateful-consumer-object.cpp):
 
 ```cpp
 class Consumer
