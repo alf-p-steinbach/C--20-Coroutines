@@ -1,4 +1,7 @@
-﻿#include <concepts>
+﻿#pragma once    // Source encoding: UTF-8 with BOM (π is a lowercase Greek "pi").
+#include <cpp_machinery\basic\type_builders.hpp>    // in_, const_, ref_
+
+#include <concepts>
 #include <coroutine>
 #include <exception>
 #include <optional>
@@ -14,10 +17,6 @@ namespace cpp_machinery::coroutine {
             std::runtime_error,                                                     // <stdexcept>
             std::forward, std::move,                                                // <utility>
             std::get, std::variant, std::monostate;                                 // <variant>
-
-    template< class Type >  using const_    = const Type;
-    template< class Type >  using ref_      = Type&;
-    template< class Type >  using in_       = const Type&;
 
     template< class Yield_result >
     class Simple_state_
@@ -43,23 +42,29 @@ namespace cpp_machinery::coroutine {
     public:
         auto state() const -> State_index::Enum { return typename State_index::Enum( m_state.index() ); }
 
-        auto is_in_finished_state() const noexcept -> bool { return (state() == State_index::finished); }
+        auto is_in_startup_state() const noexcept   -> bool { return (state() == State_index::startup); }
+        auto is_in_value_state() const noexcept     -> bool { return (state() == State_index::value); }
+        auto is_in_finished_state() const noexcept  -> bool { return (state() == State_index::finished); }
 
-        auto has_exception() const noexcept
-            -> bool
-        { return (is_in_finished_state() and !!x_ptr_ref()); }
-
-        void rethrow_if_exception() const
+        // Startup-state → value-state:
+        //
+        template< convertible_to<Yield_result> From >
+        void set_value( From&& from )
         {
-            // TODO: Check for nested exception.
-            if( has_exception() ) { rethrow_exception( x_ptr_ref() ); }
+            if( is_in_finished_state() ) {
+                // TODO: Check for nested exception.
+                throw runtime_error( "Can't go back from finished state." );
+            }
+            m_state.template emplace<State_index::value>( forward<From>( from ) );
         }
 
+        // Value-state → finished-state:
+        //
         void set_exception( const exception_ptr px ) { m_state.template emplace<State_index::finished>( px ); }
-
         void set_finished() { if( not is_in_finished_state() ) { set_exception( nullptr ); } }
 
-        auto is_in_value_state() const noexcept -> bool { return (state() == State_index::value); }
+
+        // Value-state interface:
 
         auto has_value() const noexcept
             -> bool
@@ -79,17 +84,18 @@ namespace cpp_machinery::coroutine {
             return opt_value_ref().value();
         }
 
-        template< convertible_to<Yield_result> From >
-        void set_value( From&& from )
-        {
-            if( is_in_finished_state() ) {
-                // TODO: Check for nested exception.
-                throw runtime_error( "Can't go back from finished state." );
-            }
-            m_state.template emplace<State_index::value>( forward<From>( from ) );
-        }
 
-        auto is_in_startup_state() const noexcept -> bool { return (state() == State_index::startup); }
+        // Finished-state interface:
+
+        auto has_exception() const noexcept
+            -> bool
+        { return (is_in_finished_state() and !!x_ptr_ref()); }
+
+        void rethrow_if_exception() const
+        {
+            // TODO: Check for nested exception.
+            if( has_exception() ) { rethrow_exception( x_ptr_ref() ); }
+        }
     };
 
 
