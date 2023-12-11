@@ -1,50 +1,18 @@
+#include <cpp_machinery/_all.hpp>
+
 #include <initializer_list>     // For curly braces list in range based `for`.
 #include <functional>
 #include <stack>
-#include <utility>
-
-namespace cppm {    // cpp machinery
-    using   std::stack,         // <stack>
-            std::move;          // <utility>
-
-    template< class Type >  using const_    = const Type;
-    template< class Type >  using in_       = const Type&;
-    
-    template< class Type > struct Non_deduced_t_ { using T = Type; };
-    
-    template< class Type >
-    using Non_deduced_ = typename Non_deduced_t_<Type>::T;
-
-    template< class Type >
-    auto a_( Non_deduced_<Type&> o )        -> Type& { return o; }
-    
-    template< class Type >
-    auto a_( Non_deduced_<const Type&> o )  -> const Type& { return o; }
-    
-    template< class Type >
-    auto a_( Non_deduced_<Type&&> o )       -> Type&& { return move( o ); }
-    
-    template< class Type >
-    auto popped_top_of( stack<Type>& st )
-        -> Type
-    {
-        const auto result = a_<Type>( st.top() );
-        st.pop();
-        return result;
-    }
-    
-    template< class Type >
-    auto is_empty( in_<Type> c ) -> bool { return c.empty(); }
-}  // namespace cppm
 
 namespace bst {
-    using   cppm::const_, cppm::in_, cppm::a_, cppm::popped_top_of, cppm::is_empty;
+    namespace cppm = cpp_machinery;
+    using   cppm::const_, cppm::in_, cppm::ref_, cppm::a_, cppm::popped_top_of, cppm::is_empty;
     using   std::function,          // <functional>
             std::stack;             // <stack>
 
     struct Node{ int value; Node* left; Node* right; };
     
-    void insert( const int new_value, Node*& root )
+    void insert( const int new_value, ref_<Node*> root )
     {
         const_<Node*> new_node = new Node{ new_value };
         if( not root ) {
@@ -53,7 +21,7 @@ namespace bst {
         }
         Node* current = root;
         for( ;; ) {
-            Node*& child = (new_value < current->value? current->left : current->right);
+            ref_<Node*> child = (new_value < current->value? current->left : current->right);
             if( not child ) {
                 child = new_node;
                 break;
