@@ -417,7 +417,7 @@ So this is the only rewrite that preserves the view of the coroutine code as bei
 ---
 ## 5. The coroutine API.
 
-The **coroutine API** consists of two user supplied coroutine specific class types that I’ll call `Promise` and `Result`, with methods that are called by the coroutine initialization and by `co_yield` and `co_await` expressions and `co_return` statements.
+The **coroutine API** consists of two user supplied coroutine specific class types that I’ll call `Promise` and `Result`, with methods that are called by the coroutine instantiation and by `co_yield` and `co_await` expressions and `co_return` statements.
 
 The `Result` class is the ordinary function return value of the coroutine and is produced by an ordinary function call, which effects a coroutine instantiation. At a minimum for the in-practice it should carry a coroutine handle, because that’s needed to *h*`.resume` the routine. Formally it doesn’t need that handle but by default it needs to provide the type name **`promise_type`** for the `Promise` class, so that the coroutine instantiation can create its instance of that class.
 
