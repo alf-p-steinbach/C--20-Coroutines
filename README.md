@@ -524,4 +524,6 @@ However, the output with MinGW 11.2.0 (just about the latest at this writing) sh
 
 Not so good.
 
+As a reality check, when the call to `app::run()` is commented out the program reports 0 bytes allocated, so it is indeed the coroutine instantiation that allocates.
+
 Apparently coroutines are not yet ready for deployment to large scale code. 😒
