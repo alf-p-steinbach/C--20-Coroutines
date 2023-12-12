@@ -19,7 +19,7 @@ namespace cpp_machinery::coroutine {
             std::get, std::variant, std::monostate;                                 // <variant>
 
     template< class Yield_result >
-    class Simple_state_
+    class Simple_progress_state_
     {
     public:
         struct State_index{ enum Enum{ startup, value, finished }; };
@@ -104,13 +104,14 @@ namespace cpp_machinery::coroutine {
     //
     template< class Coroutine_result, class Yield_result >
     class Simple_promise_:
-        public Simple_state_< Yield_result >
+        public Simple_progress_state_< Yield_result >
     {
-    public:
-        using Base = Simple_state_< Yield_result >;
-        using   Base::set_finished, Base::set_exception, Base::set_value;
+        using Base      = Simple_progress_state_< Yield_result >;
+        using Self      = Simple_promise_;
+        using Handle    = coroutine_handle<Self>;
 
-        using Handle    = coroutine_handle<Simple_promise_>;
+    public:
+        using   Base::set_finished, Base::set_exception, Base::set_value;
 
         auto get_return_object()      // Can't be `const` b/c `from_promise`.
             -> Coroutine_result
@@ -148,6 +149,8 @@ namespace cpp_machinery::coroutine {
         using Promise   = Simple_promise_< Coroutine_result, Yield_result >;
         using Handle    = Promise::Handle;
 
+        using promise_type = Promise;       // Required.
+
     private:
         Basic_sequence_( in_<Basic_sequence_> ) = delete;
         auto operator=( in_<Basic_sequence_> ) = delete;
@@ -169,8 +172,6 @@ namespace cpp_machinery::coroutine {
         }
 
      public:
-        using promise_type = Promise;       // Required.
-
         ~Basic_sequence_() { m_cor_handle.destroy(); }
         Basic_sequence_( const Handle h ) : m_cor_handle( h ) {}
 
