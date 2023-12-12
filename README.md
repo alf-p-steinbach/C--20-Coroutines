@@ -494,7 +494,7 @@ namespace app {
 auto main() -> int { app::run(); }
 ~~~
 
-Note the call to **`h.destroy()`**. For the general case a coroutine instance’s state has to be allocated dynamically (by the coroutine instantiation), because an arbitrarily long lifetime can be required. With a conforming implementation the `.destroy()` call cleans up, destroying and deallocating that instance.
+Note the call to **`h.destroy()`**. For the general case a coroutine instance’s state has to be allocated dynamically (by the coroutine instantiation), because an arbitrarily long lifetime can be required. The `.destroy()` call cleans up, destroying and deallocating that instance.
 
 Output:
 
