@@ -417,11 +417,11 @@ For a minimal “Hello, world!” coroutine example that *doesn’t use any 3ʳ�
 
 A coroutine handle is a [`std::coroutine_handle`](https://en.cppreference.com/w/cpp/coroutine/coroutine_handle), and that class’s constructors only support copying handles and creating null-handles. To get a handle to a specified coroutine one must use one of the `static` member functions `.from_promise` or `.from_address`. The `.from_promise` function takes a coroutine-specific `Promise`-object by non-`const` reference (the `Promise` type can be any type that supplies five required member functions, and it needs not be named `Promise`).
 
-It’s the instantiation of a coroutine, via an ordinary function call, that creates the `Promise` object for this instance. The type can be specified either via a **type name `promise_type` in the coroutine return type**, or by specializing `std::coroutine_traits` for the function type. By default `coroutine_traits` just produces the `promise_type` specified in the result type.
+It’s the instantiation of a coroutine, via an ordinary function call, that creates the `Promise` object for this instance. The type can be specified either via a **type name `promise_type` in the coroutine return type**, or by specializing `std::coroutine_traits` for the function type. By default `coroutine_traits` just produces the `promise_type` specified in the return type.
 
 After creating the `Promise` object the coroutine instantion calls `Promise::get_return_object` to create the function return value, and this required member function causes a circular relationship:
 
-* the coroutine function result type, let’s call it `Result`, must by default contain the alias `promise_type`, specifying e.g. `Promise`, so `Promise` must be known in the `Result` class, while
+* the coroutine function return type, let’s call it `Result`, must by default contain the alias `promise_type`, specifying e.g. `Promise`, so `Promise` must be known in the `Result` class, while
 * `Promise::get_return_object` returns a `Result`, so `Result` must be known in the `Promise` class.
 
 One way to break that circularity is to use a forward declaration of `Promise` as in the example below, and another way is to have `Promise` as a nested class in the `Result` class.
