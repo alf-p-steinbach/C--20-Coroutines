@@ -504,7 +504,7 @@ auto main() -> int
 }
 ~~~
 
-Note the call to **`.destroy()`**. For the general case a coroutine instance’s state has to be allocated dynamically, because an arbitrarily long lifetime can be required. The `.destroy()` should ideally clean up, destroying and deallocating that instance.
+Note the call to **`h.destroy()`**. For the general case a coroutine instance’s state has to be allocated dynamically, because an arbitrarily long lifetime can be required. The `.destroy()` should ideally clean up, destroying and deallocating that instance.
 
 Visual C++ produces the expected (modulo allocation amount) output:
 
