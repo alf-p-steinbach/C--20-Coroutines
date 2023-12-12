@@ -524,6 +524,6 @@ However, the output with MinGW g++ 11.2.0 (just about the latest at this writing
 
 Not so good.
 
-As a reality check, when the call to `app::run()` is commented out the program reports 0 bytes allocated, so it is indeed the coroutine instantiation that allocates.
+As a reality check, when the call to `app::run()` is commented out the program reports 0 bytes allocated, so it is indeed the coroutine instantiation that allocates. As another reality check, replacing the code in `app::run` with a `delete new S;` reports equal numbers of allocated and deallocated bytes. I.e. g++ does indeed pass the size to `operator delete`.
 
 Apparently coroutines are not yet ready for deployment to large scale code. 😒
