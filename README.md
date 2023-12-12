@@ -506,28 +506,5 @@ Finished.
 ~~~
 
 ---
-### 5.2. Memory leak with MinGW g++.
+### 5.2. ads.
 
-asd
-
-Visual C++ produces the expected (modulo allocation amount) output:
-
-    Instantiating the coroutine.
-    Transferring control to the coroutine.
-      Coroutine `say_hello` says hello, dear world!
-    Finished.
-    112 bytes allocated, 112 bytes deallocated.
-
-However, the output with MinGW g++ 11.2.0 (just about the latest at this writing) shows a **memory leak**:
-
-    Instantiating the coroutine.
-    Transferring control to the coroutine.
-      Coroutine `say_hello` says hello, dear world!
-    Finished.
-    40 bytes allocated, 0 bytes deallocated.
-
-Not so good.
-
-As a reality check, when the call to `app::run()` is commented out the program reports 0 bytes allocated, so it is indeed the coroutine instantiation that allocates. As another reality check, replacing the code in `app::run` with a `delete new S;` reports equal numbers of allocated and deallocated bytes. I.e. g++ does indeed pass the size to `operator delete`.
-
-Apparently coroutines are not yet ready for deployment to large scale code. 😒
