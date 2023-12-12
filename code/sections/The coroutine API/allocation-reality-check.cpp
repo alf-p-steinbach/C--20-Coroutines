@@ -16,18 +16,20 @@ void operator delete( void* p, const size_t size )
     ::free( p );
 }
 
-namespace app {
-    void run()
+namespace {
+    struct Envelope
     {
-        struct S{ char _[42]; };
-        delete new S;
-    }
-}  // namespace app
-
-auto main() -> int
-{
-    app::run();
-    fprintf( stderr, "%d bytes allocated, %d bytes deallocated.\n",
-        ::n_bytes_allocated, ::n_bytes_deallocated
-        );
-}
+        ~Envelope()
+        {
+            fprintf( stderr, "\n%d bytes allocated, %d bytes deallocated, %s.\n",
+                ::n_bytes_allocated,
+                ::n_bytes_deallocated,
+                (::n_bytes_allocated == ::n_bytes_deallocated? "OK" : "oops.")
+                );
+        }
+        
+        Envelope() {}
+    };
+    
+    const auto envelope = Envelope();
+}  // namespace <anon>

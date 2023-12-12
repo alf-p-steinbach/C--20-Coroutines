@@ -16,6 +16,9 @@
   - [4.3. Replacing the stateful sequence production with a mathematical formula.](#43-replacing-the-stateful-sequence-production-with-a-mathematical-formula)
   - [4.4. Expressing the producing code as an object that on demand produces the next value.](#44-expressing-the-producing-code-as-an-object-that-on-demand-produces-the-next-value)
   - [4.5. Expressing the consuming code as an object that when ordered consumes a specified value.](#45-expressing-the-consuming-code-as-an-object-that-when-ordered-consumes-a-specified-value)
+- [5. The coroutine API.](#5-the-coroutine-api)
+  - [5.1. A coroutine “Hello, world!” using only basics.](#51-a-coroutine-hello-world-using-only-basics)
+  - [5.2. Memory leak with MinGW g++.](#52-memory-leak-with-mingw-g)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -411,11 +414,20 @@ This is the only rewrite that mostly preserves the coroutine code.
 
 So this is the only rewrite that preserves the view of the coroutine code as being *in charge* and *pushing* numbers into the processing logic.
 
+---
 ## 5. The coroutine API.
+
+The **coroutine API** consists of two user supplied coroutine specific class types that I’ll call `Promise` and `Result`, with methods that are called by the coroutine initialization and by `co_yield` and `co_await` expressions and `co_return` statements.
+
+The `Result` class is the ordinary function return value of the coroutine and is produced by an ordinary function call, which effects a coroutine instantiation. At a minimum for the in-practice it should carry a coroutine handle, because that’s needed to *h*`.resume` the routine. Formally it doesn’t need that handle but by default it needs to provide the type name **`promise_type`** for the `Promise` class, so that the coroutine instantiation can create its instance of that class.
+
+The `Promise` class can be any type that supplies five required member functions used to customize and to communicate results and exceptions from the coroutine; it might but needs not be derived from `std::promise` (apparently it's ordinarily not). It’s the coroutine instantiation that creates a `Promise` instance. The coroutine handle is obtained in a callback on the coroutine instance’s newly created `Promise` instance, namely in its `.get_return_object` method. To communicate that handle to the instantiating code (e.g. `main`) this method then puts the handle in the coroutine function `Result` that it produces. Which is an apparently needless wall of Microsoft-ish obfuscation, perhaps designed also with the goal of fostering sales of books and courses.
+
+### 5.1. A coroutine “Hello, world!” using only basics.
 
 For a minimal “Hello, world!” coroutine example that *doesn’t use any 3ʳᵈ party support functionality*, the first challenge is to obtain a handle *h* to the coroutine instance so that `main` can call *h*`.resume()`.
 
-A coroutine handle is a [`std::coroutine_handle`](https://en.cppreference.com/w/cpp/coroutine/coroutine_handle), and that class’s constructors only support copying handles and creating null-handles. To get a handle to a specified coroutine one must use one of the `static` member functions `.from_promise` or `.from_address`. The `.from_promise` function takes a coroutine-specific `Promise`-object by non-`const` reference (the `Promise` type can be any type that supplies five required member functions, and it needs not be named `Promise`).
+A coroutine handle is a [`std::coroutine_handle`](https://en.cppreference.com/w/cpp/coroutine/coroutine_handle), and that class’s constructors only support copying handles and creating null-handles. To get a handle to a specified coroutine one must use one of `std::coroutine_handle`’s `static` member functions `.from_promise` or `.from_address`. The `.from_promise` function takes a coroutine-specific `Promise`-object by non-`const` reference.
 
 It’s the instantiation of a coroutine, via an ordinary function call, that creates the `Promise` object for this instance. The type can be specified either via a **type name `promise_type` in the coroutine return type**, or by specializing `std::coroutine_traits` for the function type. By default `coroutine_traits` just produces the `promise_type` specified in the return type.
 
@@ -424,27 +436,13 @@ After creating the `Promise` object the coroutine instantiation calls `Promise::
 * the coroutine function return type, let’s call it `Result`, must by default contain the alias `promise_type`, specifying e.g. `Promise`, so `Promise` must be known in the `Result` class, while
 * `Promise::get_return_object` returns a `Result`, so `Result` must be known in the `Promise` class.
 
-One way to break that circularity is to use a forward declaration of `Promise` as in the example below, and another way is to have `Promise` as a nested class in the `Result` class.
+One way to break that circularity is to use a forward declaration of `Promise` as in the example below, another way is to have `Promise` as a nested class in the `Result` class, and a third way is to use templating.
 
 ~~~cpp
 #include <stddef.h>     // size_t
 #include <stdio.h>      // puts, fprintf, stderr
 #include <stdlib.h>     // malloc
 #include <coroutine>
-
-// Keep track of memory allocations because no leaks is crucial for large scale usage:
-int     n_bytes_allocated   = 0;
-int     n_bytes_deallocated = 0;
-
-auto operator new( const size_t size )
-    -> void*
-{ n_bytes_allocated += int( size ); return ::malloc( size ); }
-
-void operator delete( void* p, const size_t size )
-{
-    n_bytes_deallocated += int( size );
-    ::free( p );
-}
 
 namespace app {
     using   std::coroutine_handle, std::suspend_always;
@@ -489,22 +487,30 @@ namespace app {
         h.resume();
         
         puts( "Finished." );
-        #ifndef FORCE_MEMORY_LEAK
+        #ifndef FORCE_MEMORY_LEAK_PLEASE
             h.destroy();
         #endif
     }
 }  // namespace app
 
-auto main() -> int
-{
-    app::run();
-    fprintf( stderr, "%d bytes allocated, %d bytes deallocated.\n",
-        ::n_bytes_allocated, ::n_bytes_deallocated
-        );
-}
+auto main() -> int { app::run(); }
 ~~~
 
-Note the call to **`h.destroy()`**. For the general case a coroutine instance’s state has to be allocated dynamically, because an arbitrarily long lifetime can be required. The `.destroy()` should ideally clean up, destroying and deallocating that instance.
+Note the call to **`h.destroy()`**. For the general case a coroutine instance’s state has to be allocated dynamically (by the coroutine instantiation), because an arbitrarily long lifetime can be required. With a conforming implementation the `.destroy()` call cleans up, destroying and deallocating that instance.
+
+Output:
+
+~~~txt
+Instantiating the coroutine.
+Transferring control to the coroutine.
+  Coroutine `say_hello` says hello, dear world!
+Finished.
+~~~
+
+---
+### 5.2. Memory leak with MinGW g++.
+
+asd
 
 Visual C++ produces the expected (modulo allocation amount) output:
 
