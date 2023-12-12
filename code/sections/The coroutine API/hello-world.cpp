@@ -1,6 +1,3 @@
-#include <stddef.h>     // size_t
-#include <stdio.h>      // puts, fprintf, stderr
-#include <stdlib.h>     // malloc
 #include <coroutine>
 
 namespace app {

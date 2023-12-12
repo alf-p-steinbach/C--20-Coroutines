@@ -439,9 +439,6 @@ After creating the `Promise` object the coroutine instantiation calls `Promise::
 One way to break that circularity is to use a forward declaration of `Promise` as in the example below, another way is to have `Promise` as a nested class in the `Result` class, and a third way is to use templating.
 
 ~~~cpp
-#include <stddef.h>     // size_t
-#include <stdio.h>      // puts, fprintf, stderr
-#include <stdlib.h>     // malloc
 #include <coroutine>
 
 namespace app {
