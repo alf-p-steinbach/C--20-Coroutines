@@ -514,7 +514,7 @@ Visual C++ produces the expected (modulo allocation amount) output:
     Finished.
     112 bytes allocated, 112 bytes deallocated.
 
-However, the output with MinGW 11.2.0 (just about the latest at this writing) shows a **memory leak**:
+However, the output with MinGW g++ 11.2.0 (just about the latest at this writing) shows a **memory leak**:
 
     Instantiating the coroutine.
     Transferring control to the coroutine.
