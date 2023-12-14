@@ -126,7 +126,9 @@ A stackless coroutine transfer, expressed with keyword `co_await`, `co_yield` or
 
 The subroutine calls that these coroutines make can have possibly long call chains until the execution returns back up to the next transfer. But when it gets back up to a point of control transfer the stack depth is limited to a very small value known at compile time, which means that all coroutine instances in a thread of execution can share that thread’s single common stack for their arbitrarily stack hungry subroutine calls. So they’re not entirely stackless — that term is to some degree a misnomer — but for their own internal code execution they use a very small capacity stack, and for subroutine calls they share a common stack.
 
-Recall that the general notion of coroutines is of stackful, **symmetric** coroutines. With symmetric coroutines each transfer specifies, directly or indirectly, the coroutine that should resume execution; the transfers are between coroutines. In contrast, with **asymmetric** coroutines a transfer to a coroutine comes from some top level control, and a transfer out from a coroutine is back up from the coroutine to the top level control, which can then transfer down to another coroutine and resume that, and so on. And C++20 coroutines are not just limited to stackless. They’re also limited to asymmetric, which unfortunately leads to speaking about transfers — e.g. cppreference does this — as **calls** and **returns**, even though this is very unlike subroutine calls and returns.
+Recall that the general notion of coroutines is of stackful, **symmetric** coroutines. With symmetric coroutines each transfer specifies, directly or indirectly, the coroutine that should resume execution; the transfers are between coroutines. In contrast, with **asymmetric** coroutines a transfer to a coroutine comes from some top level control, and a transfer out from a coroutine is back up from the coroutine to the top level control, which can then transfer down to another coroutine and resume that, and so on.
+
+C++20 coroutines are easiest to use as asymmetric coroutines; stackless, asymmetric coroutines. This unfortunately leads to speaking about transfers — e.g. cppreference does this — as **calls** and **returns**, even though this is very unlike subroutine calls and returns. However, they apparently also support symmetric coroutine transfers, i.e. transfers directly between coroutines.
 
 One way to visualize the general notion of coroutine execution is that:
 
@@ -506,5 +508,83 @@ Finished.
 ~~~
 
 ---
-### 5.2. ads.
+### 5.2. Producing values via `co_yield`.
+
+~~~cpp
+#include <stdio.h>      // printf
+#include <concepts>
+#include <coroutine>
+#include <optional>
+#include <utility>
+
+namespace app {
+    using   std::convertible_to,                            // <concepts>
+            std::coroutine_handle, std::suspend_always,     // <coroutine>
+            std::nullopt, std::optional,                    // <optional>
+            std::forward;                                   // <utility>
+
+    struct Promise;
+
+    struct Result
+    {
+        using promise_type = Promise;       // Required alias.
+        coroutine_handle<Promise>   handle;
+    };
+    
+    struct Promise
+    {
+        using Self          = Promise;
+        using Yield_result  = int;
+
+        optional<Yield_result>  m_value_yielded;    // Empty communicates "finished" (our choice).
+
+        // All 5 functions are required, except can use `return_value` instead of `return_void`.
+        // `return_void` is here not a dummy: it has to communicate that the coroutine is finished.
+
+        auto get_return_object()        // Can't be `const` b/c `from_promise` parameter.
+            -> Result
+        { return Result{ coroutine_handle<Self>::from_promise( *this ) }; }
+
+        auto initial_suspend() const noexcept   -> suspend_always   { return {}; }
+        auto final_suspend() noexcept           -> suspend_always   { return {}; }
+        void return_void() { m_value_yielded = nullopt; }
+        void unhandled_exception() {}   // Not expecting any exception, but could store it.
+
+        // This function (or overloads) is called by a `co_yield`, i.e. is required for that:
+        template< convertible_to<Yield_result> From >
+        auto yield_value( From&& from )
+            -> suspend_always
+        {
+            m_value_yielded = forward<From>( from );
+            return {};
+        }
+    };
+
+    auto numbers() -> Result
+    {
+        for( int i = 1; i <= 7; ++i ) { co_yield i*i; }
+    }
+    
+    void run()
+    {
+        puts( "Instantiating the coroutine." );
+        const auto h = numbers().handle;
+        Promise& promise = h.promise();
+        // At this point none of the code in the coroutine body has executed.
+        
+        puts( "Transferring control to the coroutine." );
+        h.resume();
+        while( promise.m_value_yielded.has_value() ) {
+            printf( "%d ", promise.m_value_yielded.value() );
+            h.resume();
+        }
+        printf( "\n" );
+        
+        puts( "Finished." );
+        h.destroy();
+    }
+}  // namespace app
+
+auto main() -> int { app::run(); }
+~~~
 

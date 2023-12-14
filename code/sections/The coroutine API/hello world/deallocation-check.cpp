@@ -31,11 +31,11 @@ namespace {
         ~Envelope()
         {
             fprintf( stderr,
-                "\n%d bytes allocated in %d calls.\n"
-                "%d bytes known deallocated in %d calls.\n"
-                "%d unsized deallocs.\n"
-                "Number of allocations and deallocations %smatch.\n"
-                "%s.\n",
+                ""  "\n%d bytes allocated in %d calls.\n"
+                    "%d bytes known deallocated in %d calls.\n"
+                    "%d unsized deallocs.\n"
+                    "Number of allocations and deallocations %smatch.\n"
+                    "%s.\n",
                 ::n_bytes_allocated, n_allocs,
                 ::n_bytes_deallocated, n_deallocs,
                 ::n_unsized_deallocs,
