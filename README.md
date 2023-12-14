@@ -575,7 +575,7 @@ namespace app {
         // At this point none of the code in the coroutine body has executed.
         
         puts( "Transferring control to the coroutine." );
-        h.resume();
+        h.resume();     // Produces the first value.
 
         puts( "Displaying the values that it produces." );
         printf( "%4s", "" );
