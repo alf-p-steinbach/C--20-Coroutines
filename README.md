@@ -510,6 +510,8 @@ Finished.
 ---
 ### 5.2. Producing values via `co_yield`, using only basics.
 
+Complete code:
+
 ~~~cpp
 #include <stdio.h>      // printf
 #include <concepts>
@@ -574,6 +576,7 @@ namespace app {
         
         puts( "Transferring control to the coroutine." );
         h.resume();
+        printf( "%4s", "" );
         while( promise.m_value_yielded.has_value() ) {
             printf( "%d ", promise.m_value_yielded.value() );
             h.resume();
@@ -588,3 +591,11 @@ namespace app {
 auto main() -> int { app::run(); }
 ~~~
 
+Output:
+
+~~~txt
+Instantiating the coroutine.
+Transferring control to the coroutine.
+    1 4 9 16 25 36 49
+Finished.
+~~~

@@ -61,6 +61,7 @@ namespace app {
         
         puts( "Transferring control to the coroutine." );
         h.resume();
+        printf( "%4s", "" );
         while( promise.m_value_yielded.has_value() ) {
             printf( "%d ", promise.m_value_yielded.value() );
             h.resume();
