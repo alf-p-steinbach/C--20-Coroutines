@@ -576,6 +576,8 @@ namespace app {
         
         puts( "Transferring control to the coroutine." );
         h.resume();
+
+        puts( "Displaying the values that it produces." );
         printf( "%4s", "" );
         while( promise.m_value_yielded.has_value() ) {
             printf( "%d ", promise.m_value_yielded.value() );
@@ -596,6 +598,7 @@ Output:
 ~~~txt
 Instantiating the coroutine.
 Transferring control to the coroutine.
+Displaying the values that it produces.
     1 4 9 16 25 36 49
 Finished.
 ~~~
