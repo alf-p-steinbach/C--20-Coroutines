@@ -510,7 +510,7 @@ Finished.
 ---
 ### 5.2. Producing values via `co_yield`, using only basics.
 
-A coroutine that produces values communicates those values via its `Promise`. To this end the `Promise` class can be outfitted with a yield-value data member. For a conventional coroutine there’s no value yet immediately after instantiation, and this example models that by using `std::optional` for the data memeber &mdash; which here also serves to communicate whether the coroutine has finished:
+A coroutine that produces values communicates those values via its `Promise`. To this end the `Promise` class can be outfitted with a yield-value data member. For a conventional coroutine there’s no value yet immediately after instantiation, and this example models that by using `std::optional` for the data member &mdash; which here also serves to communicate whether the coroutine has finished:
 
 ~~~cpp
 using Yield_result  = int;
@@ -529,7 +529,7 @@ In order to put a first value in the `Promise`, `main` then issues a **primer tr
 h.resume();     // Produces the first value.
 ~~~
 
-This is based on knowledge of the particular coroutine, that instantiating it suspends it before executing any of its code. It’s possible to override that. So for a general case with a coroutine with unknown behavior, ideally one should check whether there is already a value.
+This is based on knowledge of the particular coroutine, that instantiating it suspends it before executing any of its code. It’s possible to override that. So in general such a primer transfer needs not be necessary (i.e. could be wrong), but that would be a pretty *unconventional* coroutine.
 
 Displaying the produced value sequence is then just a matter of looping until the coroutine’s finished:
 
