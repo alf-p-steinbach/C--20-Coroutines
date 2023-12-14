@@ -508,7 +508,7 @@ Finished.
 ~~~
 
 ---
-### 5.2. Producing values via `co_yield`.
+### 5.2. Producing values via `co_yield`, using only basics.
 
 ~~~cpp
 #include <stdio.h>      // printf
