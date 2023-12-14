@@ -38,11 +38,10 @@ namespace app {
         void unhandled_exception() {}   // Not expecting any exception, but could store it.
 
         // This function (or overloads) is called by a `co_yield`, i.e. is required for that:
-        template< convertible_to<Yield_result> From >
-        auto yield_value( From&& from )
+        auto yield_value( const int v )
             -> suspend_always
         {
-            m_value_yielded = forward<From>( from );
+            m_value_yielded = v;
             return {};
         }
     };

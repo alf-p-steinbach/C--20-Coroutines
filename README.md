@@ -510,6 +510,58 @@ Finished.
 ---
 ### 5.2. Producing values via `co_yield`, using only basics.
 
+A coroutine that produces values communicates those values via its `Promise`. To this end the `Promise` class can be outfitted with a yield-value data member. For a conventional coroutine there’s no value yet immediately after instantiation, and this example models that by using `std::optional` for the data memeber &mdash; which here also serves to communicate whether the coroutine has finished:
+
+~~~cpp
+using Yield_result  = int;
+optional<Yield_result>  m_value_yielded;    // Empty communicates "finished" (our choice).
+~~~
+
+`main` gains access to the coroutine instance’s `Promise` via the coroutine handle’s *h*`.promise()`:
+
+~~~cpp
+Promise& promise = h.promise();
+~~~
+
+In order to put a first value in the `Promise`, `main` then issues a **primer transfer**:
+
+~~~cpp
+h.resume();     // Produces the first value.
+~~~
+
+This is based on knowledge of the particular coroutine, that instantiating it suspends it before executing any of its code. It’s possible to override that. So for a general case with a coroutine with unknown behavior, ideally one should check whether there is already a value.
+
+Displaying the produced value sequence is then just a matter of looping until the coroutine’s finished:
+
+~~~cpp
+printf( "%4s", "" );
+while( promise.m_value_yielded.has_value() ) {
+    printf( "%d ", promise.m_value_yielded.value() );
+    h.resume();
+}
+printf( "\n" );
+~~~
+
+On the coroutine side the values that it `co_yield`s end up in the `optional` via calls to **`Promise::yield_value`**, issued by each `co_yield`:
+
+~~~cpp
+// This function (or overloads) is called by a `co_yield`, i.e. is required for that:
+auto yield_value( const int v )
+    -> suspend_always
+{
+    m_value_yielded = v;
+    return {};
+}
+~~~
+
+It can be a set of overloads, and/or a function template: the important thing is that a `co_yield` can call it.
+
+The final emptying of the `optional` to indicate that the coroutine’s finished is here done via **`Promise::return_void`**, which is called when the execution falls off the end of the coroutine body (and also by a `co_return` with no argument or with argument of type `void`):
+
+~~~cpp
+void return_void() { m_value_yielded = nullopt; }
+~~~
+
 Complete code:
 
 ~~~cpp
@@ -553,11 +605,10 @@ namespace app {
         void unhandled_exception() {}   // Not expecting any exception, but could store it.
 
         // This function (or overloads) is called by a `co_yield`, i.e. is required for that:
-        template< convertible_to<Yield_result> From >
-        auto yield_value( From&& from )
+        auto yield_value( const int v )
             -> suspend_always
         {
-            m_value_yielded = forward<From>( from );
+            m_value_yielded = v;
             return {};
         }
     };
