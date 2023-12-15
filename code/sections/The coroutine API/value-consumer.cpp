@@ -72,6 +72,9 @@ namespace app {
         Promise& promise = h.promise();
         // At this point none of the code in the coroutine body has executed.
         
+        puts( "Transferring control to the coroutine." );
+        h.resume();     // Starts it waiting for the first value.
+
         puts( "Sending values to the coroutine." );
         printf( "%4s", "" );
         for( int i = 1; i <= 7; ++i ) {

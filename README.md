@@ -739,6 +739,9 @@ namespace app {
         Promise& promise = h.promise();
         // At this point none of the code in the coroutine body has executed.
         
+        puts( "Transferring control to the coroutine." );
+        h.resume();     // Starts it waiting for the first value.
+
         puts( "Sending values to the coroutine." );
         printf( "%4s", "" );
         for( int i = 1; i <= 7; ++i ) {
@@ -761,6 +764,6 @@ Output:
 ~~~txt
 Instantiating the coroutine.
 Sending values to the coroutine.
-    4, 9, 16, 25, 36, 49.
+    1, 4, 9, 16, 25, 36, 49.
 Finished.
 ~~~
