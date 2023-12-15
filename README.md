@@ -18,7 +18,8 @@
   - [4.5. Expressing the consuming code as an object that when ordered consumes a specified value.](#45-expressing-the-consuming-code-as-an-object-that-when-ordered-consumes-a-specified-value)
 - [5. The coroutine API.](#5-the-coroutine-api)
   - [5.1. A coroutine “Hello, world!” using only basics.](#51-a-coroutine-hello-world-using-only-basics)
-  - [5.2. Producing values via `co_yield`, using only basics.](#52-producing-values-via-co_yield-using-only-basics)
+  - [5.2. A `co_yield` value producer using only basics.](#52-a-co_yield-value-producer-using-only-basics)
+  - [5.2. A `co_await` value consumer using only basics.](#52-a-co_await-value-consumer-using-only-basics)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
