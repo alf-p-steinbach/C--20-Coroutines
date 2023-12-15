@@ -508,7 +508,7 @@ Finished.
 ~~~
 
 ---
-### 5.2. Producing values via `co_yield`, using only basics.
+### 5.2. A `co_yield` value producer using only basics.
 
 A coroutine that produces values communicates those values via its `Promise`. To this end the `Promise` class can be outfitted with a yield-value data member. For a conventional coroutine there’s no value yet immediately after instantiation, and this example models that by using `std::optional` for the data member &mdash; which here also serves to communicate whether the coroutine has finished:
 
@@ -653,3 +653,11 @@ Displaying the values that it produces.
     1 4 9 16 25 36 49
 Finished.
 ~~~
+
+This code, while quite complex compared to a subroutine, is still *straightforward*, no subtleties. Mainly that’s because the coroutine is known to be *ready* to produce the next value after each current value has been consumed, because that’s the *only* thing it does, so a *h*`.resume()` call can be issued unconditionally. This would not be so if the coroutine e.g. alternated between producing a value and getting a value from some other coroutine: an unconditional *h*`.resume()` call could then resume the coroutine from its waiting on a value before that value had become available, and wreak havoc.
+
+In other words, there are levels of complexity above this, and not much is needed to encounter that complexity.
+
+---
+### 5.2. A `co_await` value consumer using only basics.
+
