@@ -763,6 +763,7 @@ Output:
 
 ~~~txt
 Instantiating the coroutine.
+Transferring control to the coroutine.
 Sending values to the coroutine.
     1, 4, 9, 16, 25, 36, 49.
 Finished.
