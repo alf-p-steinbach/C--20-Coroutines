@@ -662,6 +662,44 @@ In other words, there are levels of complexity above this, and not much is neede
 ---
 ### 5.3. A `co_await` value consumer using only basics.
 
+Just as `co_yield` provides a kind of output mechanism for coroutines, `co_await` provides a kind of input mechanism. But `co_await` is much more general: it can be used to let a coroutine wait for any kind of event, not just the presence of input. It’s so general that a `co_yield` can be viewed as just a wrapper around a corresponding `co_await`, a special case.
+
+To use it as an input mechanism for a sequence of values, the coroutine instance’s `Promise` is again the place to store the data (each value):
+
+~~~cpp
+using Await_result  = int;
+optional<Await_result>  m_value_awaited;    // Empty communicates "finish!" (our choice).
+~~~
+
+The value that some other code puts there is retrieved when the coroutine resumes after the `co_await` suspension, via a callback on an **`Awaiter`** object’s **`.await_resume`** method:
+
+~~~cpp
+auto await_resume() const
+    -> optional<Await_result>                       // Return value for the `co_await`.
+{ return m_p_promise->m_value_awaited; }
+~~~
+
+This method’s result is then directly the result of the `co_await` expression.
+
+The reason for the pointer in that implementation is that I chose to keep things relatively clean by not just using the `Promise` directly as `Awaiter`, but instead defining the `Awaiter` as a nested class. As far as I can see as of mid December 2023 the documentation at cppreference does not indicate whether the `Promise` formally can be used directly as `Awaiter`. An experimental version of this example with the `Promise` as `Awaiter` worked with Visual C++ but crashed with MinGW g++ with exit code 0xC0000005 “access denied”, indicating a dangling reference to a temporary.
+
+In addition to `.await_resume` the `Awaiter` needs two other methods to support `co_await`, i.e. to work as an `Awaiter`. Namely `.await_ready` (read that as “on await ready”), which usually will just return `false` in order to suspend the coroutine execution (i.e. wait), and `await_suspend` (read that as “on await suspend”) whose return type indicates where to transfer the execution. The return type `void` means transfer back up to the coroutine caller, and otherwise the return type can be a `bool` (suspend or not?) or a `coroutine_handle` (where to transfer).
+
+So, in passing, `await_suspend` appears to support symmetric coroutine functionality, with transfers directly between coroutines instead of just up to and down from some higher control level.
+
+The `co_await` expression can’t directly have an `Awaiter` as argument because whether the `Awaiter` directly is the `Promise` or is a separate class, it needs to know about the coroutine instance’s `Promise` where the data is, and the coroutine code does not have that knowledge: it cannot refer directly to its associated `Promise`.
+
+Instead the `co_await` argument type is used to refer to or produce an `Awaiter`, in a two step process:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/determine-awaiter.png" width="25%">
+
+1. Establishing an **`Awaitable`**: if the `Promise` has an applicable **`.await_transform`** method, that method is passed the argument and its result is the `Awaitable`; otherwise the argument itself is the `Awaitable`.
+2. Establishing the `Awaiter`: if the `Awaitable` has an **`operator co_await`** or if the `Awaitable` can be passed to a free function `operator co_await`, that function’s result is the `Awaiter`; otherwise the `Awaitable` is itself the `Awaiter`.
+
+It’s unclear to me what the purpose of the possibility of an `Awaitable` + `operator co_await`, is.
+
+So, in this example I use the fall-through behavior in step 2 to just go directly from a dummy argument type `Input` (essentially a tag type, it has no other technical purpose than being a distinct type) to a `Promise::Awaiter` instance, which `.await_transform` can produce because as a member function of `Promise` it does have the requisite knowledge of the `Promise` instance.
+
 Complete code:
 
 ~~~cpp
@@ -768,3 +806,4 @@ Sending values to the coroutine.
     1, 4, 9, 16, 25, 36, 49.
 Finished.
 ~~~
+
