@@ -808,18 +808,21 @@ Sending values to the coroutine.
 Finished.
 ~~~
 
+---
 ## 6. Synchronization.
 
 A main advantage of coroutines, compared to threads, is that there is no actually parallel execution in a set of corotines in the same thread. This dispenses with many of the dangerous subtleties of thread synchronization. Still synchronization is necessary for general coroutine usage, e.g.:
 
-* a coroutine waiting for an input value should not be resumed until that value is present;
+* a coroutine waiting for an input value should not be resumed until that value is present or end-of-stream is signalled;
 * a coroutine waiting to produce an output value should not be resumed until the output buffer (e.g. a single output value variable) has room for the new value; and
 * a coroutine waiting after having produced an output value when there was room immediately, or just waiting to ensure some liveliness for the couroutine executions, can be resumed at any time.
 
-Of course “input” and “output”, value streams, are not the only abstractions that can be employed for a coroutine’s interaction. For example, something like Ada rendezvous’ could conceivably be implemented. But for clarity and simplicity let’s keep to the simple i/o model, thinking of coroutines as processes in *pipelines*.
+Of course “input” and “output”, value streams, are not the only abstractions that can be employed for a coroutine’s interaction. For example, something like [Ada rendezvous](https://en.wikibooks.org/wiki/Ada_Programming/Tasking#Rendezvous)’ could conceivably be implemented. But for clarity and simplicity let’s keep to the simple i/o model, thinking of coroutines as processes in *pipelines*.
 
-The examples in the previous section achieved i/o synchronization via knowledge of the particular coroutines’s code, that each one did only one `co_yield` or `co_await`, repeatedly. In `main` one therefore knew that an *h*`.resume()` call would just give another loop iteration in the coroutine and end up at the same `co_yield` or `co_await` again. And so on.
+The examples in the previous section achieved i/o synchronization via knowledge of the particular coroutines’ code, that each did only one `co_yield` or `co_await`, repeatedly. In `main` one therefore knew that an *h*`.resume()` call would just give another loop iteration in the coroutine and end up at the same `co_yield` or `co_await` again. And so on.
 
-But consider a coroutine that produces as output the accumulated sums of its input numbers. Then there is a `co_await` for the input and a `co_yield` for each sum. Assume that the coroutine is programmed in a “clever” way where it sometimes reads (if available) two input values before outputting the corresponding sums. And that this is unpredictable, perhaps chosen at random. The code that calls *h*`.resume()` then needs to know why the coroutine was suspended: is it waiting for an input value, which the calling code should fill in; or is it waiting to produce an output value, or after having produced one, which the calling code should consume; or is waiting to ensure liveliness, in which case it can just be resumed?
+But consider a coroutine that produces as output the accumulated sums of its input numbers. Then there is a `co_await` for the input and a `co_yield` for each sum. Assume that the coroutine is programmed in a “clever” way where it sometimes reads (if available) two input values before outputting the corresponding sums. And that this is unpredictable, perhaps chosen at random. The code that calls *h*`.resume()`, produces input values and consumes output values, can then not do that properly without some checking of what the coroutine is ready for.
+
+### 6.1. Readiness.
 
 
