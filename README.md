@@ -21,6 +21,7 @@
   - [5.2. A `co_yield` value producer using only basics.](#52-a-co_yield-value-producer-using-only-basics)
   - [5.3. A `co_await` value consumer using only basics.](#53-a-co_await-value-consumer-using-only-basics)
 - [6. Synchronization.](#6-synchronization)
+  - [6.1. Readiness.](#61-readiness)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
