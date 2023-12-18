@@ -813,16 +813,41 @@ Finished.
 
 A main advantage of coroutines, compared to threads, is that there is no actually parallel execution in a set of corotines in the same thread. This dispenses with many of the dangerous subtleties of thread synchronization. Still synchronization is necessary for general coroutine usage, e.g.:
 
-* a coroutine waiting for an input value should not be resumed until that value is present or end-of-stream is signalled;
-* a coroutine waiting to produce an output value should not be resumed until the output buffer (e.g. a single output value variable) has room for the new value; and
-* a coroutine waiting after having produced an output value when there was room immediately, or just waiting to ensure some liveliness for the couroutine executions, can be resumed at any time.
+* a coroutine instance waiting for an input value should not be resumed until that value is present or end-of-stream is signalled;
+* a coroutine instance waiting to produce an output value should not be resumed until the output buffer (e.g. a single output value variable) has room for the new value; and
+* a coroutine instance suspended after having produced an output value when there was room immediately, or just suspended to ensure some liveliness for the couroutine executions, can be resumed at any time.
 
 Of course “input” and “output”, value streams, are not the only abstractions that can be employed for a coroutine’s interaction. For example, something like [Ada rendezvous](https://en.wikibooks.org/wiki/Ada_Programming/Tasking#Rendezvous)’ could conceivably be implemented. But for clarity and simplicity let’s keep to the simple i/o model, thinking of coroutines as processes in *pipelines*.
 
 The examples in the previous section achieved i/o synchronization via knowledge of the particular coroutines’ code, that each did only one `co_yield` or `co_await`, repeatedly. In `main` one therefore knew that an *h*`.resume()` call would just give another loop iteration in the coroutine and end up at the same `co_yield` or `co_await` again. And so on.
 
-But consider a coroutine that produces as output the accumulated sums of its input numbers. Then there is a `co_await` for the input and a `co_yield` for each sum. Assume that the coroutine is programmed in a “clever” way where it sometimes reads (if available) two input values before outputting the corresponding sums. And that this is unpredictable, perhaps chosen at random. The code that calls *h*`.resume()`, produces input values and consumes output values, can then not do that properly without some checking of what the coroutine is ready for.
+But consider a coroutine that produces as output the accumulated sums of its input numbers. Then there is a `co_await` for the input and a `co_yield` for each sum. Assume that the coroutine is programmed in a “clever” way where it sometimes reads (if available) two input values before outputting the corresponding sums. And that this is unpredictable, perhaps chosen at random. The code that calls *h*`.resume()`, produces input values and consumes output values, can then not do that properly without some checking of what the coroutine instance is ready for.
 
 ### 6.1. Readiness.
 
+Let’s define that an i/o-based coroutine is **ready** to be resumed, i.e. *h*`.resume()` can be called, when
+
+* it’s been waiting for an input value and that value is present or end-of-stream has been signalled;
+* it’s been waiting to produce an output value and the output buffer (e.g. a single output value variable) now has room for the new value; or
+* its’ been suspended after having produced an output value, or just suspended to ensure some liveliness for the couroutine executions, including the conventional initial suspension.
+
+This readiness is all that the controller code needs to know, and with a reasonable structure it can just query the coroutine, or rather, the coroutine instance’s function result, which can serve as a higher level abstract coroutine state.
+
+Let’s call that a **`Task`** abstraction. A `Task` then has a hierarchy of progression states, as seen from the controlling code:
+
+* Suspended:
+  * Waiting:
+    * Waiting for input value.
+    * Waiting for output buffer room.
+  * Ready (including initial suspension)).
+* Finished:
+  * Successfully.
+  * Exception.
+
+There is no “running” state because that state is not observable in the same thread. It’s not observable because only one coroutine executes at a time (in each thread). So when e.g. `main` *looks*, it’s guaranteed that a coroutine is not executing, not running: `main` is.
+
+
+The controller code can fill in an input value whenever the coroutine instance’s input buffer has room.
+
+Likewise, the controller code can consume an output value whenever there is one.
 
